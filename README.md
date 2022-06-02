@@ -1,5 +1,7 @@
 # Tech-PedMenu
 
+https://discord.gg/fwWEdXBgeD
+
 
 # Come faccio a settarlo?
 ### 1. Installa il file
