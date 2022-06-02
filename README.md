@@ -17,6 +17,6 @@
 
 ### Potrai utilizzare in altri script l'exports per settare il ped ad una persona:
 
-## Client: exports['Tech-PedMenu']:SetPed('modello')
+### Client: exports['Tech-PedMenu']:SetPed('modello')
 
-## Server: exports['Tech-PedMenu']:SetPed(source, 'modello')
+### Server: exports['Tech-PedMenu']:SetPed(source, 'modello')
