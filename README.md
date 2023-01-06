@@ -14,7 +14,7 @@ https://discord.gg/fwWEdXBgeD
 # Quanto pesa?
 ### Lo script fa 0.00ms fissi
 
-# Informazioni Aggiuntivi
+# Informazioni Aggiuntive
 ### Lo script è totalmente personalizzabile tramite il file config.lua, tramite il comando setped (di base) si potrà settare un ped ad utente, anche in modo permanente, in questo modo ogni volta che l'utente entrerà nel server avrà sempre il ped senza doverlo risettare nuovamente
 
 # Dipendende
