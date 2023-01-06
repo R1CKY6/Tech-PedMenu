@@ -1,50 +1,65 @@
-ESX = exports.es_extended.getSharedObject()
+local ESX = exports.es_extended:getSharedObject()
 
 
-SetPed = function(id, model) 
-  TriggerClientEvent('ricky:setped', id, model)
+ESX.RegisterServerCallback('ricky:info', function(source,cb)
+  local xPlayer = ESX.GetPlayerFromId(source)
+
+  local result =  MySQL.Sync.fetchAll("SELECT * FROM users WHERE identifier = @identifier", {
+        ['@identifier'] = xPlayer.identifier,
+  })
+
+  local info = {
+    gruppo = xPlayer.getGroup(),
+    ped = result[1].ped
+  }
+  cb(info)
+end)
+
+
+RegisterServerEvent('ricky:setPed')
+AddEventHandler('ricky:setPed', function(id,model,permanent)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    local target = ESX.GetPlayerFromId(id)
+
+    if target == nil then 
+        xPlayer.showNotification(Tech.Lang['player_offline'])
+        return 
+    end
+
+TriggerClientEvent('ricky:setped', id, model)
+
+if permanent then 
+    MySQL.Sync.execute("UPDATE users SET ped = @ped WHERE identifier = @identifier", {
+        ['@identifier'] = target.identifier,
+        ['@ped'] = model
+    })
+end
+end)
+
+RegisterServerEvent('ricky:removePermanentPed')
+AddEventHandler('ricky:removePermanentPed', function(id)
+  local xPlayer = ESX.GetPlayerFromId(source)
+  local target = ESX.GetPlayerFromId(id)
+
+  if target == nil then 
+      xPlayer.showNotification(Tech.Lang['player_offline'])
+      return 
+  end
+
+  MySQL.Sync.execute("UPDATE users SET ped = @ped WHERE identifier = @identifier", {
+    ['@identifier'] = target.identifier,
+    ['@ped'] = nil
+})
+end)
+
+
+SetPed = function(source, model)
+  TriggerClientEvent('ricky:setped', source, model)
 end
 
+ResetPed = function(source)
+  TriggerClientEvent('ricky:setped', source)
+end
 
 exports('SetPed', SetPed)
-
-
-ESX.RegisterServerCallback('ricky:getDiscordId', function(source, cb) 
-  local discordId = false
-  for k,v in pairs(GetPlayerIdentifiers(source))do
-    if string.sub(v, 1, string.len("discord:")) == "discord:" then
-      discordId = v:gsub("discord:", "")
-    end
-  end
-  cb(discordId)
-end)
-
-
-
-ESX.RegisterServerCallback('ricky:checkadmin', function(source, cb)
-    local xPlayer = ESX.GetPlayerFromId(source)
-    local Group = xPlayer.getGroup()
-  cb(Group)
-end)
-
-  
-
-if Config.EnableCommand then
-RegisterCommand(Config.CommandName, function(source, args)
-    local xPlayer = ESX.GetPlayerFromId(source)
-    local Target = ESX.GetPlayerFromId(args[1])
-    local Group = xPlayer.getGroup()
-    local Id = tonumber(args[1])
-    local Model = args[2]
-
-    if Group == Config.AdminGroup then
-        if Target then
-          SetPed(Id, Model)
-        else
-            xPlayer.showNotification(Ricky_Lang['error'])
-        end
-      else
-        xPlayer.showNotification(Ricky_Lang['no_permission'])
-    end
-end)
-end
+exports('ResetPed', ResetPed)
