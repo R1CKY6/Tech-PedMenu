@@ -1,60 +1,56 @@
-Config = {}
+Tech = {}
+
+Tech.GroupStaff = {
+    'admin'
+}
+
+Tech.Command = {
+    enable = true,
+    name = 'setped',
 
 
-Config.Key = 'F6'
+    resetPed = {
+        enable = true,
+        name = 'resetped'
+    },
+    removePermanentPed = {
+        enable = true,
+        name = 'removeped'
+    }
+}
 
-
-Config.AdminGroup = 'admin'
-
-
-Config.OnlyAdmin = true
-
-
-Config.EnableCommand = true
-
-Config.CommandName = 'setped'
-
-
-Config.AlignMenu = 'top-left'
-
-Config.Ped = {
-    {
-        label = "Franklin",
-        model = "player_one",
-        OnlyUser = {
-            enable = false,
-            discord = ""
-        }
-     },
-     {
-        label = "Trevor",
-        model = "player_two",
-        OnlyUser = {
-            enable = false,
-            discord = ""
-        }
-     },
-     {
-        label = "Michael",
-        model = "player_zero",
-        OnlyUser = {
-            enable = true,
-            discord = "638415863682170881"
-        }
-     },
+Tech.MenuPed = {
+    enable = true,
+    staffOnly = true,
+    alignMenu = 'top-left',
+    key = 'F6',
+    ped = {
+        {
+            label = 'Franklin',
+            model = 'player_one'
+        },
+        {
+            label = 'Resetta Ped',
+            model = 'resetped' -- Don't Edit
+        },
+    }
 }
 
 
-
-
-Ricky_Lang = {
-     ['title'] = "Ped Menu",
-     ['reset_model'] = "Reset Model",
-     ['error'] = "Error: Invalid Model or Player ID",
-     ['no_permission'] = "You don't have permission to do this!",
-     ['command_help'] = "Set ped to a specific player",
-     ['chat_id'] = "ID",
-     ['chat_model'] = "Model",
-     ['chat_id_description'] = "Enter the player ID",
-     ['chat_model_description'] = "Enter the model name",
+Tech.Lang = {
+    ['title_menu'] = "Menu Ped",
+    ['reset_ped'] = 'Resetta Ped',
+    ['description_key'] = 'Apri Menu Ped',
+    ['no_ped'] = 'Ped Inesistente',
+    ['set_ped'] = 'Setta Ped',
+    ['id'] = "ID",
+    ['name_ped'] = 'Nome Ped',
+    ['permanent'] = 'Permanente',
+    ['name_ped_invalid'] = 'Inserisci il nome del ped!',
+    ['id_invalid'] = 'Inserisci l\'ID del player!',
+    ['player_offline'] = 'Utente Offline',
+    ['command_help_reset'] = 'Resetta Ped di un Utente',
+    ['command_help_permanent'] = 'Rimuovi Ped Permanente da un Utente',
+    ['chat_id'] = 'ID',
+    ['chat_id_description'] = "Inserisci l\'ID del player",
 }
