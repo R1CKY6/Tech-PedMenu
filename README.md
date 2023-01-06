@@ -1,6 +1,6 @@
 # Tech-PedMenu
 
-https://discord.gg/fwWEdXBgeD
+https://discord.gg/tHAbhd94vS
 
 
 # Come faccio a settarlo?
