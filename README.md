@@ -28,7 +28,7 @@ https://discord.gg/fwWEdXBgeD
 ### Server: exports['Tech-PedMenu']:SetPed(source, 'modello')
 
 
-### Oppure per resettarli il ped:
+# Oppure per resettarli il ped:
 
 ### Client: exports['Tech-PedMenu']:ResetPed()
 
