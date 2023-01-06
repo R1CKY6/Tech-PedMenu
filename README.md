@@ -20,6 +20,7 @@ https://discord.gg/fwWEdXBgeD
 # Dipendende
 ### Lo script necessita di ESX e ox_lib
 
+
 ### Potrai utilizzare in altri script l'exports per settare il ped ad una persona:
 
 ### Client: exports['Tech-PedMenu']:SetPed('modello')
