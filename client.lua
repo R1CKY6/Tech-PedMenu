@@ -1,120 +1,145 @@
-ESX = exports.es_extended.getSharedObject()
-local idDiscord = nil
-
-RegisterKeyMapping('pedmenu', 'Apri Menu Ped', 'keyboard', Config.Key)
+local ESX = exports.es_extended:getSharedObject()
 
 
+if Tech.MenuPed.enable then 
+    RegisterKeyMapping('-+menuped', Tech.Lang['description_key'], 'keyboard', Tech.MenuPed.key)
+    RegisterCommand('-+menuped', function(source, args, rawCommand)
+        ESX.TriggerServerCallback('ricky:info', function(info)
+            if Tech.MenuPed.staffOnly then 
+                for k,v in pairs(Tech.GroupStaff) do 
+                if info.gruppo == v then
+                    MenuPed()
+                end
+            end
+            else
+                MenuPed()
+            end
+        end)
+    end)
+    TriggerEvent('chat:removeSuggestion', '/-+menuped')
+end
 
-RegisterCommand('pedmenu', function()
-    if Config.OnlyAdmin then
-    ESX.TriggerServerCallback('ricky:checkadmin', function(Group)
-        if Group == Config.AdminGroup then
-    ApriMenu()
-        end
-      end)
-    else
-        ApriMenu()
-    end
+
+RegisterNetEvent('esx:playerLoaded')
+AddEventHandler('esx:playerLoaded',function(xPlayer, isNew, skin)
+    ESX.TriggerServerCallback('ricky:info', function(info)
+      if info.ped ~= nil then 
+           SetPed(info.ped)
+        return 
+      end
+    end)
 end)
 
-TriggerEvent('chat:addSuggestion', '/'..Config.CommandName, Ricky_Lang['command_help'], {
-    { name=Ricky_Lang['chat_id'], help=Ricky_Lang['chat_id_description'] },
-    { name=Ricky_Lang['chat_model'], help=Ricky_Lang['chat_model_description'] }
-})
 
-
-TriggerEvent('chat:removeSuggestion', '/pedmenu')
-
-
-
-
-ApriMenu = function()
-        local elements = {}
-        ESX.TriggerServerCallback('ricky:getDiscordId', function(discordId)
-            idDiscord = discordId
-        end)
-        for k,v in pairs(Config.Ped) do
-                Wait(40)
-              if v.OnlyUser.enable and v.OnlyUser.discord == idDiscord then
-                table.insert(elements, {
-                    label = v.label,
-                    model = v.model
-                })
-            end
-    if not v.OnlyUser.enable then      
-            table.insert(elements, {
-                label = v.label,
-                model = v.model
-            })
-        end
-    end
-    table.insert(elements, {
-        label = Ricky_Lang['reset_model'],
-        value = 'reset_model'
-    })
-        ESX.UI.Menu.Open('default',GetCurrentResourceName(), 'ped_menu4',
-        { 
-        title = Ricky_Lang['title'], 
-        align = Config.AlignMenu, 
-        elements = elements 
-        }, function(data, menu)
-        local model = data.current.model
-        local value = data.current.value
-        SetPed(model)
-        if value == 'reset_model' then
-            ResetPed()
-        end
-        end, function(data, menu) 
-        menu.close() 
-        end)
+MenuPed = function()
+   local elementi = Tech.MenuPed.ped
+   ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'menu_ped', {
+   title    = Tech.Lang['title_menu'],
+   align    = Tech.MenuPed.alignMenu,
+   elements = Tech.MenuPed.ped
+  }, function(data, menu)
+    SetPed(data.current.model)
+  end, function(data, menu)
+      menu.close()
+  end)
 end
 
 SetPed = function(model)
-    model = GetHashKey(model)
-
-
-    ESX.Streaming.RequestModel(model, function()
-        SetPlayerModel(PlayerId(), model)
-    end)
+    if model == 'resetped' then 
+        ResetPed()
+        return 
+    end
+    if IsModelInCdimage(model) and IsModelValid(model) then
+      RequestModel(model)
+      while not HasModelLoaded(model) do
+        Citizen.Wait(0)
+      end
+      SetPlayerModel(PlayerId(), model)
+      SetModelAsNoLongerNeeded(model)
+    else
+        ESX.ShowNotification(Tech.Lang['no_ped'])
+    end
 end
 
 
 ResetPed = function()
-  local MalePed = 'mp_m_freemode_01'
-  local FemalePed = 'mp_f_freemode_01'
-
-  TriggerEvent('skinchanger:getSkin', function(skin)
-    if skin.sex == 0 then
-	ESX.Streaming.RequestModel(MalePed, function()
-		SetPlayerModel(PlayerId(), MalePed)
-		TriggerEvent('skinchanger:loadSkin', {sex = 0})
-
-          end)
-    else
-            ESX.Streaming.RequestModel(FemalePed, function()
-            SetPlayerModel(PlayerId(), FemalePed)
-            TriggerEvent('skinchanger:loadSkin', {sex = 1})
-        end) 
-      end
-	end)
-end
-
-
-
-Staff = function()
-    ESX.TriggerServerCallback('ricky:checkadminpedmenu', function(Group)
-        if Group == Config.AdminGroup then
-            return true
-        else
-            return false
+    local maschio = 'mp_m_freemode_01'
+    local femmina = 'mp_f_reemode_01'
+    TriggerEvent('skinchanger:getSkin', function(skin)
+      if skin.sex == 0 then 
+        RequestModel(maschio)
+        while not HasModelLoaded(maschio) do
+          Citizen.Wait(0)
         end
+        SetPlayerModel(PlayerId(), maschio)
+        TriggerEvent('skinchanger:getSkin', function(skin)
+            TriggerEvent('skinchanger:loadSkin', skin)
+          end)
+      else
+        RequestModel(femmina)
+        while not HasModelLoaded(femmina) do
+          Citizen.Wait(0)
+        end
+        SetPlayerModel(PlayerId(), femmina)
+        TriggerEvent('skinchanger:getSkin', function(skin)
+            TriggerEvent('skinchanger:loadSkin', skin)
+          end)
+      end
     end)
 end
 
-exports('SetPed', SetPed)
+if Tech.Command.enable then 
+ RegisterCommand(Tech.Command.name, function(source, args, rawCommand)
+      local input = lib.inputDialog(Tech.Lang['set_ped'], {
+        {type ="number", label = Tech.Lang['id']},
+        {type ="input", placeholder = Tech.Lang['name_ped']},
+        {type = "checkbox", label = Tech.Lang['permanent']}
+      })
+      if input then
+        if input[1] == nil then  
+            ESX.ShowNotificaion(Tech.Lang['id_invalid'])
+            return
+        elseif input[2] == nil then 
+            ESX.ShowNotificaion(Tech.Lang['name_ped_invalid'])
+            return
+        else
+            TriggerServerEvent('ricky:setPed', input[1], input[2], input[3])
+        end
+      end
+ end)
+end
+
+if Tech.Command.removePermanentPed.enable then 
+    RegisterCommand(Tech.Command.removePermanentPed.name, function(source, args, rawCommand)
+        local id = args[1]
+        TriggerServerEvent('ricky:removePermanentPed', id)
+    end)
+
+    TriggerEvent('chat:addSuggestion', '/'..Tech.Command.removePermanentPed.name, Tech.Lang['command_help_permanent'], {
+        { name=Tech.Lang['chat_id'], help=Tech.Lang['chat_id_description'] },
+    })
+end
+
+
+if Tech.Command.resetPed.enable then 
+    RegisterCommand(Tech.Command.resetPed.name, function(source, args, rawCommand)
+        local id = args[1]
+        TriggerServerEvent('ricky:setPed', id, 'resetped', false)
+    end)
+
+    TriggerEvent('chat:addSuggestion', '/'..Tech.Command.resetPed.name, Tech.Lang['command_help_reset'], {
+        { name=Tech.Lang['chat_id'], help=Tech.Lang['chat_id_description'] },
+    })
+end
 
 RegisterNetEvent('ricky:setped')
 AddEventHandler('ricky:setped', function(model)
-    SetPed(model)
+  SetPed(model)
+end)
+RegisterNetEvent('ricky:resetped')
+AddEventHandler('ricky:resetped', function()
+  ResetPed()
 end)
 
+exports('SetPed', SetPed)
+exports('ResetPed', ResetPed)
