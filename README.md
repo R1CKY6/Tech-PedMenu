@@ -15,7 +15,10 @@ https://discord.gg/fwWEdXBgeD
 ### Lo script fa 0.00ms fissi
 
 # Informazioni Aggiuntivi
-### Nel Config potrai settare tutti i ped che vuoi, potrai anche settare un ped solo con utente abilitando la funzione "Enable" in "OnlyUser" e specificando L'ID della persona in "discord"
+### Lo script è totalmente personalizzabile tramite il file config.lua, tramite il comando setped (di base) si potrà settare un ped ad utente, anche in modo permanente, in questo modo ogni volta che l'utente entrerà nel server avrà sempre il ped senza doverlo risettare nuovamente
+
+# Dipendende
+### Lo script necessita di ESX e ox_lib
 
 ### Potrai utilizzare in altri script l'exports per settare il ped ad una persona:
 
@@ -27,7 +30,6 @@ https://discord.gg/fwWEdXBgeD
 ### Oppure per resettarli il ped:
 
 ### Client: exports['Tech-PedMenu']:ResetPed()
-
 
 ### Server: exports['Tech-PedMenu']:ResetPed(source)
 
